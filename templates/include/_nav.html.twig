@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg bg-success py-0" id="nav">
+  <div class="container-fluid">
+    <a class="navbar-brand text-white" href="{{ path('app_home') }}">Ecoameth</a>
+    <button class="navbar-toggler bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{{path('app_catalog') }}">Catalogue</a>
+            </li>
+
+        </ul>
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-100">
+
+            {% if app.user %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ app.user.firstName }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Mon compte</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_login') }}">Connexion</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ path('app_register') }}">Inscription</a>
+                </li>
+            {% endif %}
+
+             
+
+            
+       
+        </ul>
+    </div>
+  </div>
+</nav>
