@@ -1,35 +1,47 @@
-{% extends 'base.html.twig' %}
+{% extends "base.twig" %}
 
-{% block title %}Cart index{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Votre Panier</h2>
 
-{% block body %}
-    <h1>Cart index</h1>
-
-    <table class="table">
-        <thead>
+    {% if cart.items is not empty %}
+    <table class="table table-bordered">
+        <thead class="thead-dark">
             <tr>
-                <th>Id</th>
-                <th>CreatedAt</th>
-                <th>actions</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Quantité</th>
+                <th>Total</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-        {% for cart in carts %}
+            {% for item in cart.items %}
             <tr>
-                <td>{{ cart.id }}</td>
-                <td>{{ cart.createdAt ? cart.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price | number_format(2, ',', ' ') }} €</td>
                 <td>
-                    <a href="{{ path('app_cart_show', {'id': cart.id}) }}">show</a>
-                    <a href="{{ path('app_cart_edit', {'id': cart.id}) }}">edit</a>
+                    <form action="{{ path('cart_update', { id: item.id }) }}" method="post">
+                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control d-inline-block w-50">
+                        <button type="submit" class="btn btn-sm btn-success">✔</button>
+                    </form>
+                </td>
+                <td>{{ (item.price * item.quantity) | number_format(2, ',', ' ') }} €</td>
+                <td>
+                    <a href="{{ path('cart_remove', { id: item.id }) }}" class="btn btn-danger btn-sm">🗑 Supprimer</a>
                 </td>
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_cart_new') }}">Create new</a>
+    <div class="d-flex justify-content-between mt-4">
+        <h4>Total : <strong>{{ cart.total | number_format(2, ',', ' ') }} €</strong></h4>
+        <a href="{{ path('checkout') }}" class="btn btn-primary">Passer à la commande</a>
+    </div>
+    
+    {% else %}
+    <div class="alert alert-warning">Votre panier est vide.</div>
+    {% endif %}
+</div>
 {% endblock %}

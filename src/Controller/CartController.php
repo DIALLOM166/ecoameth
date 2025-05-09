@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/cart')]
+#[Route('/panier')]
 final class CartController extends AbstractController
 {
     #[Route(name: 'app_cart_index', methods: ['GET'])]

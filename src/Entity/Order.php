@@ -17,9 +17,9 @@ class Order
     private ?int $id = null;
 
     /**
-     * @var Collection<int, Orderitems>
+     * @var Collection<int, OrderItems>
      */
-    #[ORM\OneToMany(targetEntity: OrderItems::class, mappedBy: 'Orderitems')]
+    #[ORM\OneToMany(targetEntity: OrderItems::class, mappedBy: 'OrderItems')]
     private Collection $orders;
 
     /**
