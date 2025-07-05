@@ -1,47 +1,55 @@
-{% extends "base.twig" %}
+{% extends 'base.html.twig' %}
 
-{% block content %}
+{% block title %}Votre Panier{% endblock %}
+
+{% block body %}
 <div class="container mt-5">
-    <h2 class="mb-4">Votre Panier</h2>
+    <h1 class="mb-4">🛒 Votre panier</h1>
 
-    {% if cart.items is not empty %}
-    <table class="table table-bordered">
-        <thead class="thead-dark">
-            <tr>
-                <th>Produit</th>
-                <th>Prix</th>
-                <th>Quantité</th>
-                <th>Total</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in cart.items %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.price | number_format(2, ',', ' ') }} €</td>
-                <td>
-                    <form action="{{ path('cart_update', { id: item.id }) }}" method="post">
-                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control d-inline-block w-50">
-                        <button type="submit" class="btn btn-sm btn-success">✔</button>
-                    </form>
-                </td>
-                <td>{{ (item.price * item.quantity) | number_format(2, ',', ' ') }} €</td>
-                <td>
-                    <a href="{{ path('cart_remove', { id: item.id }) }}" class="btn btn-danger btn-sm">🗑 Supprimer</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="d-flex justify-content-between mt-4">
-        <h4>Total : <strong>{{ cart.total | number_format(2, ',', ' ') }} €</strong></h4>
-        <a href="{{ path('checkout') }}" class="btn btn-primary">Passer à la commande</a>
-    </div>
-    
+    {% if items is empty %}
+        <div class="alert alert-info">Votre panier est vide.</div>
     {% else %}
-    <div class="alert alert-warning">Votre panier est vide.</div>
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-success">
+                <tr>
+                    <th>Produit</th>
+                    <th>Prix unitaire</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.price }} €</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>{{ (item.product.price * item.quantity)|number_format(2, '.', ',') }} €</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ path('cart_add', {'id': item.product.id}) }}" class="btn btn-success btn-sm" title="Ajouter">➕</a>
+                                <a href="{{ path('cart_decrement', {'id': item.product.id}) }}" class="btn btn-warning btn-sm" title="Réduire">➖</a>
+                                <a href="{{ path('cart_remove', {'id': item.product.id}) }}" class="btn btn-danger btn-sm" title="Supprimer">🗑️</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-end mb-4">
+            <h4>Total : <strong>{{ total|number_format(2, '.', ',') }} €</strong></h4>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('cart_clear') }}" class="btn btn-outline-danger">
+                🧹 Vider le panier
+            </a>
+            <a href="{{ path('app_cart_checkout') }}" class="btn btn-primary">
+                💳 Payer
+            </a>
+        </div>
     {% endif %}
 </div>
 {% endblock %}

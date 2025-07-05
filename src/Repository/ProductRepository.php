@@ -40,4 +40,28 @@ class ProductRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findProductFilter($search, $order, $categories)
+{
+    $qb = $this->createQueryBuilder('p');
+
+    if ($search) {
+        $qb->andWhere('p.name LIKE :search')
+           ->setParameter('search', '%' . $search . '%');
+    }
+
+    if ($categories) {
+        $qb->andWhere('p.category IN (:categories)')
+           ->setParameter('categories', $categories);
+    }
+
+    if ($order) {
+        $qb->orderBy('p.price', $order);
+    }
+
+    return $qb->getQuery()->getResult();
 }
+
+}
+
+

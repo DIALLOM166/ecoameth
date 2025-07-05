@@ -34,7 +34,10 @@ a.text-white:hover, .navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
 
 #nav{
     min-height: 9vh;
+    
 }
+
+
 main{
     min-height: 82vh;
     
@@ -75,3 +78,11 @@ footer{
 .form-control:focus::placeholder{
     color: var(--color-white);
 }
+
+.imgDefaut {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+

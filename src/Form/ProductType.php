@@ -18,6 +18,7 @@ class ProductType extends AbstractType
             ->add('description')
             ->add('price')
             ->add('stock')
+           // ->add('imageFile', VichFileType::class)
             ->add('createdAt', null, [
                 'widget' => 'single_text',
             ])

@@ -1,4 +1,12 @@
+{# templates/product/_form.html.twig #}
+
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_row(form.name) }}
+    {{ form_row(form.description) }}
+    {{ form_row(form.price) }}
+    {{ form_row(form.stock) }}
+    {{ form_row(form.createdAt) }}
+    {{ form_row(form.categories) }}
+
+    <button type="submit">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}

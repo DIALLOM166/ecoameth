@@ -1,4 +1,35 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+
+<div class="mb-3">
+    <label class="form-label">
+        <i class="fas fa-box"></i> Product
+    </label>
+    {{ form_widget(form.product, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        <i class="fas fa-sort-numeric-up"></i> Quantity
+    </label>
+    {{ form_widget(form.quantity, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        <i class="fas fa-euro-sign"></i> Price
+    </label>
+    {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<div class="mb-3">
+    <label class="form-label">
+        <i class="fas fa-receipt"></i> Order
+    </label>
+    {{ form_widget(form.orderItems, {'attr': {'class': 'form-control'}}) }}
+</div>
+
+<button class="btn btn-primary">
+    <i class="fas fa-save"></i> Save
+</button>
+
 {{ form_end(form) }}

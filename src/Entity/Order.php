@@ -16,25 +16,19 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, OrderItems>
-     */
-    #[ORM\OneToMany(targetEntity: OrderItems::class, mappedBy: 'OrderItems')]
-    private Collection $orders;
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderItems::class, orphanRemoval: true)]
+    private Collection $OrderItems;
 
-    /**
-     * @var Collection<int, Payment>
-     */
-    #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'payment', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'order', targetEntity: Payment::class, orphanRemoval: true)]
     private Collection $payments;
 
-    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
+        $this->orderItems = new ArrayCollection();
         $this->payments = new ArrayCollection();
     }
 
@@ -44,29 +38,28 @@ class Order
     }
 
     /**
-     * @return Collection<int, Orderitems>
+     * @return Collection<int, OrderItems>
      */
-    public function getOrders(): Collection
+    public function getOrderItems(): Collection
     {
-        return $this->orders;
+        return $this->orderItems;
     }
 
-    public function addOrder(Orderitems $order): static
+    public function addOrderItem(OrderItems $item): static
     {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-            $order->setOrderitems($this);
+        if (!$this->orderItems->contains($item)) {
+            $this->orderItems->add($item);
+            $item->setOrder($this);
         }
 
         return $this;
     }
 
-    public function removeOrder(Orderitems $order): static
+    public function removeOrderItem(OrderItems $item): static
     {
-        if ($this->orders->removeElement($order)) {
-            // set the owning side to null (unless already changed)
-            if ($order->getOrderitems() === $this) {
-                $order->setOrderitems(null);
+        if ($this->orderItems->removeElement($item)) {
+            if ($item->getOrder() === $this) {
+                $item->setOrder(null);
             }
         }
 
@@ -85,7 +78,7 @@ class Order
     {
         if (!$this->payments->contains($payment)) {
             $this->payments->add($payment);
-            $payment->setPayment($this);
+            $payment->setOrder($this);
         }
 
         return $this;
@@ -94,9 +87,8 @@ class Order
     public function removePayment(Payment $payment): static
     {
         if ($this->payments->removeElement($payment)) {
-            // set the owning side to null (unless already changed)
-            if ($payment->getPayment() === $this) {
-                $payment->setPayment(null);
+            if ($payment->getOrder() === $this) {
+                $payment->setOrder(null);
             }
         }
 

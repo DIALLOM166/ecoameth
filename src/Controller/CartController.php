@@ -2,80 +2,59 @@
 
 namespace App\Controller;
 
-use App\Entity\Cart;
-use App\Form\CartType;
-use App\Repository\CartRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\CartService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/panier')]
-final class CartController extends AbstractController
+//#[Route('/panier')]
+class CartController extends AbstractController
 {
-    #[Route(name: 'app_cart_index', methods: ['GET'])]
-    public function index(CartRepository $cartRepository): Response
+    #[Route('/panier', name: 'cart_index')]
+    public function index(CartService $cartService): Response
     {
         return $this->render('cart/index.html.twig', [
-            'carts' => $cartRepository->findAll(),
+            'items' => $cartService->getDetailedCartItems(),
+            'total' => $cartService->getTotal(),
         ]);
     }
 
-    #[Route('/new', name: 'app_cart_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/cart/checkout', name: 'app_cart_checkout')]
+    public function checkout(): Response
     {
-        $cart = new Cart();
-        $form = $this->createForm(CartType::class, $cart);
-        $form->handleRequest($request);
+        // Tu peux récupérer les infos du panier ici, vérifier les données, etc.
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($cart);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_cart_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('cart/new.html.twig', [
-            'cart' => $cart,
-            'form' => $form,
+        return $this->render('cart/checkout.html.twig', [
+            // passer les données nécessaires à la vue
         ]);
     }
 
-    #[Route('/{id}', name: 'app_cart_show', methods: ['GET'])]
-    public function show(Cart $cart): Response
+
+    #[Route('/add/{id}', name: 'cart_add')]
+    public function add(int $id, CartService $cartService): Response
     {
-        return $this->render('cart/show.html.twig', [
-            'cart' => $cart,
-        ]);
+        $cartService->add($id);
+        return $this->redirectToRoute('cart_index');
     }
 
-    #[Route('/{id}/edit', name: 'app_cart_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Cart $cart, EntityManagerInterface $entityManager): Response
+    #[Route('/decrement/{id}', name: 'cart_decrement')]
+    public function decrement(int $id, CartService $cartService): Response
     {
-        $form = $this->createForm(CartType::class, $cart);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_cart_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('cart/edit.html.twig', [
-            'cart' => $cart,
-            'form' => $form,
-        ]);
+        $cartService->decrement($id);
+        return $this->redirectToRoute('cart_index');
     }
 
-    #[Route('/{id}', name: 'app_cart_delete', methods: ['POST'])]
-    public function delete(Request $request, Cart $cart, EntityManagerInterface $entityManager): Response
+    #[Route('/remove/{id}', name: 'cart_remove')]
+    public function remove(int $id, CartService $cartService): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$cart->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($cart);
-            $entityManager->flush();
-        }
+        $cartService->remove($id);
+        return $this->redirectToRoute('cart_index');
+    }
 
-        return $this->redirectToRoute('app_cart_index', [], Response::HTTP_SEE_OTHER);
+    #[Route('/clear', name: 'cart_clear')]
+    public function clear(CartService $cartService): Response
+    {
+        $cartService->clear();
+        return $this->redirectToRoute('cart_index');
     }
 }
