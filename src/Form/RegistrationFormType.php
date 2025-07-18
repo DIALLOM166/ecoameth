@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -76,17 +77,30 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'mapped' => false,
-                'label' => 'Mot de passe<span class="text-white">*</span>',
-                'label_html' => true,
-                'required' => false,
-                'attr' => ['autocomplete' => 'new-password'],
-                'constraints' => [
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'options' => [
+                    'attr' => [
+                        'autocomplete' => 'new-password',
+                    ],
+                ],
+                'first_options' => [
+                    'label' => 'Mot de passe<span class="text-white">*</span>',
+                    'label_html' => true,
+                    'attr' => [
+                        'placeholder' => 'saisir un mot de passe',
+                    ],
+                ],
+                'second_options' => [
+                   'label' => 'Confirmation du mot de passe<span class="text-white">*</span>',
+                    'label_html' => true,
+                    'attr' => [
+                        'placeholder' => 'Confirmer le mot de passe',
+                    ],
+                ],
+                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez saisir un mot de passe',
                     ]),
                     new Regex([
                         'pattern' => '/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{12,}$/',
@@ -97,6 +111,9 @@ class RegistrationFormType extends AbstractType
                         
                     ]),
                 ],
+                'invalid_message' => 'Les mots de passe doivent étre identique.',
+                'mapped' => false,
+                'required' =>false,
             ])
         ;
     }

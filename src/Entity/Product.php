@@ -175,4 +175,20 @@ class Product
         }
         return $this;
     }
+
+    #[ORM\Column(type: 'boolean')]
+private bool $featured = false;
+
+public function isFeatured(): bool
+{
+    return $this->featured;
+}
+
+public function setFeatured(bool $featured): self
+{
+    $this->featured = $featured;
+
+    return $this;
+}
+
 }

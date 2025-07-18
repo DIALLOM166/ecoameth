@@ -1,0 +1,11 @@
+{% extends "email/base.html.twig" %}
+
+{% block body %}
+
+    <p>Pour activer votre compte, veuillez visiter le lien suivant</p>
+
+    <a style="color:#5f8575;" href="{{ url('app_activation_account', {token: user.token}) }}">
+    {{ url('app_activation_account', {token: user.token}) }}</a>
+
+
+{% endblock %}

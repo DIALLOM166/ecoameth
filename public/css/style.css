@@ -10,7 +10,7 @@
 
 :root{
     --color-black: #299b66;
-    --color-white: #1dd186;
+    --color-white: #5f8575;
 }
 
 a.text-white:hover, .navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
@@ -36,6 +36,7 @@ a.text-white:hover, .navbar-nav .nav-link.active, .navbar-nav .nav-link.show{
     min-height: 9vh;
     
 }
+
 
 
 main{
@@ -84,5 +85,8 @@ footer{
     height: auto;
     object-fit: contain;
 }
+
+
+
 
 

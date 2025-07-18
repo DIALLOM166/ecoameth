@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} | Réinitialiser{% endblock %}
+ {% block description %}{{ parent() }}  | Réinitialiser{% endblock %}
+ {% block keywords %}{{ parent() }}  | Réinitialiser{% endblock %}
+
+
+{% block h1 %}Réinitialiser{% endblock %}
+
+{% block body %}
+   
+
+    {{ form_start(resetForm, {'attr': {'class':'bg-white col-md-6 mx-auto p-4 rounded border border-2 border-white'}}) }}
+        {{ form_row(resetForm.plainPassword) }}
+        <button class="btn btn-success w-100 pt-2">Réinitialiser</button>
+    {{ form_end(resetForm) }}
+{% endblock %}

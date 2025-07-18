@@ -3,17 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\RegistrationFormType;
 use App\Security\EmailVerifier;
+use App\Form\RegistrationFormType;
+use Symfony\Component\Mime\Address;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
@@ -22,8 +23,8 @@ class RegistrationController extends AbstractController
     {
     }
 
-    #[Route('/inscription', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    #[Route('/inscription', name: 'app_register', methods: ['GET','POST'])]
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -35,10 +36,22 @@ class RegistrationController extends AbstractController
 
             // encode the plain password
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-
+            $user->setToken(uniqid());
             $entityManager->persist($user);
             $entityManager->flush();
             $this->addflash('success', 'Votre compte a bien été crée');
+
+             $email = (new TemplatedEmail())
+            ->from(new Address('no-reply@ecoameth.fr', 'No Reply Ecoameth'))
+            ->to((string) $user->getEmail())
+            ->subject('Activation de votre compte')
+            ->htmlTemplate('email/activation_account.html.twig')
+            ->context([
+                'user' => $user,
+            ])
+        ;
+
+        $mailer->send($email);
 
             // generate a signed url and email it to the user
             $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
@@ -80,4 +93,23 @@ class RegistrationController extends AbstractController
 
         return $this->redirectToRoute('app_register');
     }
+
+     #[Route('/activation-compte/{token}', name: 'app_activation_account', methods: ['GET','POST'])]
+     public function activationAccount(string $token, userRepository $userRepository,
+     EntityManagerInterface $EntityManagerInterface): Response
+     {
+        $user = $userRepository->findOneBy(['token' => $token]);
+
+        if ($user) {
+        $user->setToken(null);
+        $entityManager->flush();
+        $this->addFlash('success', 'Votre compte  été activé');
+        }
+        else{
+            $this->addFlash('error', 'Un problème technique est survenu');
+        }
+
+
+        return $this->redirectToRoute('app_login');
+     }
 }

@@ -28,11 +28,18 @@
             </p>
 
             {# Affiche l’image si disponible, sinon une image par défaut #}
-            {% if firstImage and firstImage.filePath %}
-                <img src="{{ asset('uploads/' ~ firstImage.filePath) }}" alt="{{ product.name }}" class="imgDefaut">
-            {% else %}
-                <img src="{{ asset('uploads/defaut.png') }}" alt="Image par défaut" class="imgDefaut">
-            {% endif %}
+          {% if product.images is not empty %}
+    {% for image in product.images %}
+        {% if image.filePath %}
+            <img src="{{ asset('uploads/products/' ~ image.filePath) }}" alt="{{ product.name }}" class="imgDefaut">
+        {% else %}
+            <img src="{{ asset('uploads/defaut.png') }}" alt="Image manquante" class="imgDefaut">
+        {% endif %}
+    {% endfor %}
+{% else %}
+    <img src="{{ asset('uploads/defaut.png') }}" alt="Image par défaut" class="imgDefaut">
+{% endif %}
+
 
 
             <p><em>
